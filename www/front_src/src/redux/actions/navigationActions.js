@@ -11,25 +11,10 @@ export const fetchNavigationData = () => {
 
     try {
       // Call the API
-      const { data } = await axios("internal.php?object=centreon_menu&action=menu").get();
-
-      // store allowed topologies in an array
-      // eg : ["3","301","30102","6","602"]
-      let navigationData = []
-      for (let [levelOneKey, levelOneProps] of Object.entries(data)) {
-        navigationData.push(levelOneKey.slice(1))
-        for (let [levelTwoKey, levelTwoProps] of Object.entries(levelOneProps.children)) {
-          navigationData.push(levelTwoKey.slice(1))
-          for (let levelThreeProps of Object.values(levelTwoProps.children)) {
-            for (let levelFourKey of Object.keys(levelThreeProps)) {
-              navigationData.push(levelFourKey.slice(1))
-            }
-          }
-        }
-      }
+      const { data } = await axios("internal.php?object=centreon_topology&action=menulist").get();
 
      // Update payload in reducer on success
-     dispatch(fetchNavigationSuccess(navigationData, data));
+     dispatch(fetchNavigationSuccess(data.result, data.result));
     } catch (err) {
      // Update error in reducer on failure
      dispatch(fetchNavigationFailure(err));
