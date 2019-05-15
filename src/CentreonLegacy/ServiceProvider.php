@@ -61,6 +61,7 @@ class ServiceProvider implements AutoloadServiceProviderInterface
     const CENTREON_LEGACY_WIDGET_INSTALLER = 'centreon.legacy.widget.installer';
     const CENTREON_LEGACY_WIDGET_UPGRADER = 'centreon.legacy.widget.upgrader';
     const CENTREON_LEGACY_WIDGET_REMOVER = 'centreon.legacy.widget.remover';
+    const SYMFONY_FINDER = 'finder';
 
     /**
      * Register CentreonLegacy services
@@ -92,7 +93,7 @@ class ServiceProvider implements AutoloadServiceProviderInterface
     {
         $pimple[static::CONFIGURATION] = function (Container $container): Core\Configuration\Configuration {
             global $conf_centreon, $centreon_path;
-            return new Core\Configuration\Configuration($conf_centreon, $centreon_path);
+            return new Core\Configuration\Configuration($conf_centreon, $centreon_path, $container[static::SYMFONY_FINDER]);
         };
     }
 
