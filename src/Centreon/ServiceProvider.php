@@ -73,7 +73,7 @@ class ServiceProvider implements AutoloadServiceProviderInterface
     const CENTREON_CLAPI = 'centreon.clapi';
     const UPLOAD_MANGER = 'upload.manager';
     const CENTREON_USER = 'centreon.user';
-
+    const YML_CONFIG = 'yml.config';
 
     /**
      * Register Centreon services
@@ -82,6 +82,12 @@ class ServiceProvider implements AutoloadServiceProviderInterface
      */
     public function register(Container $pimple): void
     {
+
+        //init global yml config from src/Centreon
+        $pimple[static::YML_CONFIG] = function (Container $pimple) {
+            return $pimple[\CentreonLegacy\ServiceProvider::CONFIGURATION]->getModuleConfig(__DIR__);
+        };
+
         $pimple[static::CENTREON_WEBSERVICE] = function(Container $container): CentreonWebserviceService {
             $service = new CentreonWebserviceService;
 

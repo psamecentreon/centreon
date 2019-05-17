@@ -127,9 +127,6 @@ $dependencyInjector[CentreonI18n::class] = function ($container) {
     return $translation;
 };
 
-// Dynamically register service provider
-\Centreon\Infrastructure\Provider\AutoloadServiceProvider::register($dependencyInjector);
-
 // Centreon configuration files
 $configFiles = $dependencyInjector['finder']
     ->files()
@@ -140,3 +137,6 @@ foreach ($configFiles as $configFile) {
     $configFileName = $configFile->getBasename();
     require __DIR__ . '/config/' . $configFileName;
 }
+
+// Dynamically register service provider
+\Centreon\Infrastructure\Provider\AutoloadServiceProvider::register($dependencyInjector);
