@@ -36,14 +36,13 @@
 
 namespace Centreon;
 
-use Centreon\Infrastructure\Event\EventDispatcher;
-use Centreon\Domain\Entity\FileLoader;
 use Pimple\Container;
 use Pimple\Psr11\ServiceLocator;
 use CentreonLegacy\ServiceProvider as LegacyServiceProvider;
 use Centreon\Application\Webservice;
 use Centreon\Infrastructure\Provider\AutoloadServiceProviderInterface;
 use Centreon\Infrastructure\Service;
+use Centreon\Infrastructure\Event;
 use Centreon\Infrastructure\Service\CentreonWebserviceService;
 use Centreon\Infrastructure\Service\CentreonClapiService;
 use Centreon\Infrastructure\Service\CentcoreConfigService;
@@ -67,6 +66,7 @@ class ServiceProvider implements AutoloadServiceProviderInterface
     const CENTREON_BROKER_INFO_REPOSITORY = 'centreon.broker_info_repository';
     const CENTREON_BROKER_CONFIGURATION_SERVICE = 'centreon.broker_configuration_service';
     const UPLOAD_MANGER = 'upload.manager';
+    const CENTREON_EVENT_DISPATCHER = 'centreon.event_dispatcher';
 
     /**
      * Register Centreon services
@@ -192,14 +192,15 @@ class ServiceProvider implements AutoloadServiceProviderInterface
             return $service;
         };
 
-        $pimple['centreon.event_dispatcher'] = function (Container $container) {
-            $eventDispatcher = new EventDispatcher();
+        $pimple[static::CENTREON_EVENT_DISPATCHER] = function (Container $container) : Event\EventDispatcher {
+            $eventDispatcher = new Event\EventDispatcher();
             $eventDispatcher->setDispatcherLoader(
-                new FileLoader(
+                new Event\FileLoader(
                     _CENTREON_PATH_ . '/www/modules/',
                     'custom-module-form.php'
                 )
             );
+
             return $eventDispatcher;
         };
     }
