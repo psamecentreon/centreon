@@ -43,6 +43,7 @@ use Centreon\Infrastructure\Provider\AutoloadServiceProviderInterface;
 use CentreonLegacy\Core\Module;
 use CentreonLegacy\Core\Widget;
 use CentreonLegacy\Core\Utils;
+use Symfony\Component\Finder\Finder;
 
 class ServiceProvider implements AutoloadServiceProviderInterface
 {
@@ -61,7 +62,7 @@ class ServiceProvider implements AutoloadServiceProviderInterface
     const CENTREON_LEGACY_WIDGET_INSTALLER = 'centreon.legacy.widget.installer';
     const CENTREON_LEGACY_WIDGET_UPGRADER = 'centreon.legacy.widget.upgrader';
     const CENTREON_LEGACY_WIDGET_REMOVER = 'centreon.legacy.widget.remover';
-    const SYMFONY_FINDER = 'finder';
+    const SYMFONY_FINDER = 'sf.finder';
 
     /**
      * Register CentreonLegacy services
@@ -81,6 +82,10 @@ class ServiceProvider implements AutoloadServiceProviderInterface
             $service = new Utils\Utils($locator);
 
             return $service;
+        };
+
+        $pimple[static::SYMFONY_FINDER] = function (Container $container) : Finder {
+            return new Finder();
         };
 
         $this->registerConfiguration($pimple);
