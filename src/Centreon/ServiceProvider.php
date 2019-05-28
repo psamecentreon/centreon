@@ -40,6 +40,7 @@ use Centreon\Infrastructure\Event\EventDispatcher;
 use Centreon\Domain\Entity\FileLoader;
 use Pimple\Container;
 use Pimple\Psr11\ServiceLocator;
+use CentreonLegacy\ServiceProvider as LegacyServiceProvider;
 use Centreon\Application\Webservice;
 use Centreon\Infrastructure\Provider\AutoloadServiceProviderInterface;
 use Centreon\Infrastructure\Service;
@@ -47,6 +48,7 @@ use Centreon\Infrastructure\Service\CentreonWebserviceService;
 use Centreon\Infrastructure\Service\CentreonClapiService;
 use Centreon\Infrastructure\Service\CentcoreConfigService;
 use Centreon\Infrastructure\Service\CentreonDBManagerService;
+use Centreon\Domain\Service\I18nService;
 use Centreon\Domain\Service\FrontendComponentService;
 use Centreon\Domain\Service\AppKeyGeneratorService;
 use Centreon\Domain\Service\BrokerConfigurationService;
@@ -58,6 +60,9 @@ class ServiceProvider implements AutoloadServiceProviderInterface
 {
     //webservices
     const CENTREON_WEBSERVICE = 'centreon.webservice';
+    const CENTREON_DB_MANAGER = 'centreon.db-manager';
+    const CENTREON_CLAPI = 'centreon.clapi';
+    const CENTREON_I18N_SERVICE = 'centreon.i18n_service';
     const MENU_WEBSERVICE = 'centreon.menu.webservice';
 
     //services
@@ -100,8 +105,23 @@ class ServiceProvider implements AutoloadServiceProviderInterface
             $pimple[static::CENTREON_WEBSERVICE]->add(\Centreon\Application\Webservice\OpenApiWebservice::class);
         }
 
+        // add webservice to get translation from centreon and its extensions
+        $pimple[static::CENTREON_WEBSERVICE]->add(Webservice\CentreonI18n::class);
+
         // add webservice to get frontend hooks and pages installed by modules and widgets
         $pimple[static::CENTREON_WEBSERVICE]->add(Webservice\CentreonFrontendComponent::class);
+
+        $pimple[static::CENTREON_I18N_SERVICE] = function (Container $pimple): I18nService {
+            $pimple['translator']; // bind lang
+
+            $service = new I18nService(
+                $pimple[LegacyServiceProvider::CENTREON_LEGACY_MODULE_INFORMATION],
+                $pimple['finder'],
+                $pimple['filesystem']
+            );
+
+            return $service;
+        };
 
         $pimple[static::CENTREON_FRONTEND_COMPONENT_SERVICE] = function (Container $pimple): FrontendComponentService {
             $service = new FrontendComponentService($pimple);
