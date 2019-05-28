@@ -74,8 +74,6 @@ class ServiceProvider implements AutoloadServiceProviderInterface
     const CENTREON_BROKER_INFO_REPOSITORY = 'centreon.broker_info_repository';
 
     //managers and infrastructure services
-    const CENTREON_DB_MANAGER = 'centreon.db-manager';
-    const CENTREON_CLAPI = 'centreon.clapi';
     const UPLOAD_MANGER = 'upload.manager';
     const CENTREON_USER = 'centreon.user';
     const YML_CONFIG = 'yml.config';
