@@ -499,6 +499,9 @@ class CentreonTraps
             $ret['severity'] = "NULL";
         }
 
+        $execInterval = (!empty($this->db->escape($ret["traps_exec_interval"]))) ? intval($this->db->escape($ret["traps_exec_interval"])) : 'NULL';
+        $trapTimeout = (!empty($this->db->escape($ret["traps_timeout"]))) ? intval($this->db->escape($ret["traps_timeout"])) : 'NULL';
+
         $rq = "INSERT INTO traps ";
         $rq .= "(traps_name, traps_oid, traps_args, 
             traps_status, severity_id, traps_submit_result_enable, 
@@ -524,13 +527,13 @@ class CentreonTraps
         $rq .= "'" . $this->db->escape($ret["traps_routing_filter_services"]) . "', ";
         $rq .= "'" . $this->db->escape($ret["manufacturer_id"]) . "',";
         $rq .= "'" . $this->db->escape($ret["traps_log"]) . "', ";
-        $rq .= "'" . $this->db->escape($ret["traps_exec_interval"]) . "', ";
+        $rq .= $execInterval . ", ";
         $rq .= "'" . $this->db->escape(isset($ret["traps_exec_interval_type"]) ? $ret["traps_exec_interval_type"] : '') . "', ";
         $rq .= "'" . $this->db->escape(isset($ret["traps_exec_method"]) ? $ret["traps_exec_method"] : '') . "', ";
         $rq .= "'" . $this->db->escape(isset($ret["traps_downtime"]) ? $ret["traps_downtime"] : '') . "', ";
         $rq .= "'" . $this->db->escape($ret["traps_output_transform"]) . "', ";
         $rq .= "'" . $this->db->escape($ret['traps_advanced_treatment_default']) . "', ";
-        $rq .= "'" . $this->db->escape($ret["traps_timeout"]) . "', ";
+        $rq .= $trapTimeout . ", ";
         $rq .= "'" . $this->db->escape($ret["traps_customcode"]) . "') ";
         $this->db->query($rq);
 
