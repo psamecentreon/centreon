@@ -67,6 +67,9 @@ class CentreonLogAction
         $query = "INSERT INTO `log_action_modification` (field_name, field_value, action_log_id) VALUES ";
         $append = "";
         foreach ($fields as $key => $value) {
+            if (mb_strlen($value) > 255) {
+                $value = mb_substr($value,0,255);
+            }
             $query .= $append . "('" . CentreonDB::escape($key) . "', '" . CentreonDB::escape($value) . "', '" .
                 CentreonDB::escape($logId) . "')";
             $append = ", ";
