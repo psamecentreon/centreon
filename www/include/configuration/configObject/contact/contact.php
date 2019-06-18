@@ -120,6 +120,23 @@ $eventDispatcher->addEventHandler(
     $deleteEventHandler
 );
 
+/*
+ * Defining an event to manually request a LDAP synchronization of an array of contacts
+ */
+$synchronizeEventHandler = new EventHandler();
+$synchronizeEventHandler->setProcessing(
+    function ($arguments) {
+        if (isset($arguments['contact_ids'])) {
+            synchronizeContactWithLdap($arguments['contact_ids']);
+        }
+    }
+);
+$eventDispatcher->addEventHandler(
+    'contact.form',
+    EventDispatcher::EVENT_SYNCHRONIZE,
+    $synchronizeEventHandler
+);
+
 switch ($o) {
     case "li":
         require_once($path . "ldapImportContact.php");
@@ -177,6 +194,14 @@ switch ($o) {
     case "dn":
         require_once $path . 'displayNotification.php';
         break;
+    case "sync":
+        $eventDispatcher->notify(
+            'contact.form',
+            EventDispatcher::EVENT_SYNCHRONIZE,
+            ['contact_ids' => $select]
+        );
+        require_once($path . "listContact.php");
+        break; #Synchronize selected contacts with the LDAP
     default:
         require_once($path . "listContact.php");
         break;
